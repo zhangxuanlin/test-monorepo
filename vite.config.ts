@@ -217,7 +217,7 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "/test-monorepo/"),
+    outDir: path.resolve(import.meta.dirname, "/test-monorepo/dist/"),
     emptyOutDir: true,
   },
   server: {
