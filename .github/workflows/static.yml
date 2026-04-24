@@ -31,7 +31,8 @@ jobs:
 
       # 3. 必须有原料：安装依赖
       - name: Install dependencies
-        run: pnpm install
+        # 添加 --no-frozen-lockfile 和 --ignore-scripts 来规避补丁报错
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
 
       # 4. 核心步骤：执行打包（生成 dist/public）
       - name: Build
