@@ -204,10 +204,11 @@ function vitePluginStorageProxy(): Plugin {
 }
 
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+const basePath = process.env.VITE_BASE_PATH || "/";
 
 export default defineConfig({
   plugins,
-  base: '/test-monorepo/',
+  base: basePath,
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),

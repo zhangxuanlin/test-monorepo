@@ -27,14 +27,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # 建议使用你项目使用的 Node.js 版本
-          cache: 'npm'       # 启用缓存以加速依赖安装
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm ci          # 使用 npm ci 进行更可靠的依赖安装
+        run: npm install
 
-      - name: Build
-        run: npm run build   # 【关键修改】执行构建命令，生成 dist 目录
+      - name: Build static site
+        run: |
+          if [ "${{ github.repository }}" = "${{ github.repository_owner }}/${{ github.repository_owner }}.github.io" ]; then
+            BASE_PATH="/"
+          else
+            BASE_PATH="/${{ github.event.repository.name }}/"
+          fi
+          npx vite build --base "${BASE_PATH}"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -42,7 +48,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist/public' # 上传你 Vite 配置中指定的输出目录
+          path: "dist/public"
       
       - name: Deploy to GitHub Pages
         id: deployment
