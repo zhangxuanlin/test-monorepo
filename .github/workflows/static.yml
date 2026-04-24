@@ -1,57 +1,43 @@
-name: Deploy Static Content
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
+  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # 1. 必须有环境：安装 Node.js
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      # 2. 必须有工具：安装 pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      # 3. 必须有原料：安装依赖
-      - name: Install dependencies
-        # 添加 --no-frozen-lockfile 和 --ignore-scripts 来规避补丁报错
-        run: pnpm install --no-frozen-lockfile --ignore-scripts
-
-      # 4. 核心步骤：执行打包（生成 dist/public）
-      - name: Build
-        run: pnpm build
-
-      # 5. 辅助：在根目录放一个 .nojekyll 防止 GitHub 干扰
-      - name: Disable Jekyll
-        run: touch ./dist/public/.nojekyll
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      # 6. 打包上传：这里会去打包你刚生成的 dist/public
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # Upload entire repository
           path: 'dist/public'
-
-      # 7. 正式发布
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
